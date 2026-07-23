@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  background-color: #faf8f5;
+  color: #2c2c2c;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif {
+  font-family: "Noto Serif SC", "Source Han Serif SC", SimSun, serif;
+}

@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/layout.tsx","./src/components/philosophercard.tsx","./src/lib/api.ts","./src/lib/guest.ts","./src/pages/chatpage.tsx","./src/pages/conversationspage.tsx","./src/pages/gallerypage.tsx","./src/pages/philosopherdetailpage.tsx"],"version":"5.9.3"}
