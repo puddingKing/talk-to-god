@@ -13,7 +13,7 @@ const { port: PORT, corsOrigin } = getConfig();
 async function main() {
   initDatabase();
 
-  const app = Fastify({ logger: true });
+  const app = Fastify({ logger: true, trustProxy: true });
 
   await app.register(cors, {
     origin: corsOrigin || true,

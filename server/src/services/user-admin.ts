@@ -10,6 +10,9 @@ export function mapUserAdmin(user: DbUser, conversationCount: number) {
     nickname: user.nickname ?? undefined,
     guestId: user.guestId ?? undefined,
     isGuest: !user.phone,
+    lastIp: user.lastIp ?? undefined,
+    region: user.region ?? undefined,
+    lastSeenAt: user.lastSeenAt ?? undefined,
     createdAt: user.createdAt,
     conversationCount,
   };

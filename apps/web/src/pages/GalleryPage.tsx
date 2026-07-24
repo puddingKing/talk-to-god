@@ -38,7 +38,7 @@ export default function GalleryPage() {
   );
 
   return (
-    <div className="px-4 pt-5 pb-4">
+    <div className="px-0 pt-5 pb-4 md:pt-8">
       <header className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <img src={LOGO_URL} alt="与哲对话" className="w-10 h-10 rounded-2xl object-cover shadow-sm" />
@@ -108,7 +108,7 @@ export default function GalleryPage() {
           <p className="text-text-muted">未找到匹配的哲学家</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="card-grid">
           {philosophers.map((p) => (
             <PhilosopherCard
               key={p.philosopherId}

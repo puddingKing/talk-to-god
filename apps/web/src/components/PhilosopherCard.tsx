@@ -158,8 +158,8 @@ export default function PhilosopherCard({ philosopher, existingConversation }: P
       </div>
 
       {dialogConvs && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-end justify-center z-50">
-          <div className="bg-white rounded-t-3xl w-full max-w-lg p-5 pb-8 shadow-card">
+        <div className="modal-overlay">
+          <div className="modal-panel">
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
             <h3 className="font-semibold text-center mb-5">你已有与 {philosopher.name} 的对话</h3>
             <button

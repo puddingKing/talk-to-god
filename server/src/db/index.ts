@@ -69,6 +69,9 @@ function migrateUsersTable() {
   if (!names.has("phone")) sqlite.exec("ALTER TABLE users ADD COLUMN phone TEXT");
   if (!names.has("password_hash")) sqlite.exec("ALTER TABLE users ADD COLUMN password_hash TEXT");
   if (!names.has("nickname")) sqlite.exec("ALTER TABLE users ADD COLUMN nickname TEXT");
+  if (!names.has("last_ip")) sqlite.exec("ALTER TABLE users ADD COLUMN last_ip TEXT");
+  if (!names.has("region")) sqlite.exec("ALTER TABLE users ADD COLUMN region TEXT");
+  if (!names.has("last_seen_at")) sqlite.exec("ALTER TABLE users ADD COLUMN last_seen_at TEXT");
   sqlite.exec(
     "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone ON users(phone) WHERE phone IS NOT NULL"
   );

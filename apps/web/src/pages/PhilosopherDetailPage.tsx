@@ -64,8 +64,8 @@ export default function PhilosopherDetailPage() {
       : null;
 
   return (
-    <div className="pb-28">
-      <div className="bg-hero-gradient px-4 pt-6 pb-8 relative overflow-hidden">
+    <div className="pb-28 md:pb-8">
+      <div className="bg-hero-gradient px-0 md:rounded-2xl pt-6 pb-8 relative overflow-hidden">
         <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -left-4 bottom-0 w-24 h-24 rounded-full bg-white/10 blur-xl" />
 
@@ -100,7 +100,7 @@ export default function PhilosopherDetailPage() {
         </div>
       </div>
 
-      <div className="px-4 -mt-5 relative">
+      <div className="px-0 -mt-5 relative">
         <div className="flex gap-1 p-1 bg-white/60 backdrop-blur-md rounded-2xl border border-white/60 shadow-sm mb-4">
           <button
             onClick={() => setTab("intro")}
@@ -172,7 +172,8 @@ export default function PhilosopherDetailPage() {
         )}
       </div>
 
-      <div className="fixed bottom-20 left-0 right-0 max-w-lg mx-auto px-4">
+      <div className="fixed-action-bar">
+        <div className="fixed-action-inner">
         <button
           onClick={handleStartClick}
           disabled={loading}
@@ -180,11 +181,12 @@ export default function PhilosopherDetailPage() {
         >
           {loading ? "准备中…" : `开始与 ${philosopher.name} 对话`}
         </button>
+        </div>
       </div>
 
       {showDialog && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-end justify-center z-50">
-          <div className="bg-white rounded-t-3xl w-full max-w-lg p-5 pb-8">
+        <div className="modal-overlay">
+          <div className="modal-panel">
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
             <h3 className="font-semibold text-center mb-5">你已有与 {philosopher.name} 的对话</h3>
             <button

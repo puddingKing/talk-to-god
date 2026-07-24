@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { PhilosopherAdmin } from "@talk-to-god/shared";
+import AdminLayout from "../../components/AdminLayout";
 import { getAdminKey } from "../../lib/admin";
 import {
   createAdminPhilosopher,
@@ -106,114 +107,134 @@ export default function AdminPhilosopherEditPage() {
   };
 
   if (loading) {
-    return <p className="text-center text-text-muted py-12">加载中…</p>;
+    return (
+      <AdminLayout title={isNew ? "新增哲学家" : "编辑哲学家"} backTo="/admin/philosophers">
+        <p className="text-center text-text-muted py-12">加载中…</p>
+      </AdminLayout>
+    );
   }
 
   return (
-    <div className="min-h-dvh bg-bg max-w-2xl mx-auto px-4 py-6 pb-12">
-      <div className="flex items-center gap-3 mb-6">
-        <Link to="/admin/philosophers" className="text-text-muted text-sm">
-          ← 返回
-        </Link>
-        <h1 className="text-xl font-bold text-accent">{isNew ? "新增哲学家" : "编辑哲学家"}</h1>
-      </div>
+    <AdminLayout
+      title={isNew ? "新增哲学家" : "编辑哲学家"}
+      subtitle={isNew ? "创建新的哲学家条目" : form.name || form.id}
+      backTo="/admin/philosophers"
+    >
+      <form onSubmit={handleSubmit} className="admin-form-grid">
+        <section className="admin-form-section">
+          <h3 className="text-sm font-medium text-accent mb-1">基本信息</h3>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Field label="ID（slug）" hint="英文小写，如 nietzsche，创建后不可改">
-          <input
-            value={form.id}
-            onChange={(e) => update({ id: e.target.value })}
-            disabled={!isNew}
-            className="field-input disabled:bg-gray-50"
-            required
-          />
-        </Field>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="中文姓名">
-            <input value={form.name} onChange={(e) => update({ name: e.target.value })} className="field-input" required />
-          </Field>
-          <Field label="英文姓名">
-            <input value={form.nameEn} onChange={(e) => update({ nameEn: e.target.value })} className="field-input" />
-          </Field>
-        </div>
-
-        <Field label="头像 URL">
-          <input value={form.avatarUrl} onChange={(e) => update({ avatarUrl: e.target.value })} className="field-input" />
-        </Field>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="出生年">
+          <Field label="ID（slug）" hint="英文小写，如 nietzsche，创建后不可改">
             <input
-              type="number"
-              value={form.birthYear ?? ""}
-              onChange={(e) => update({ birthYear: e.target.value ? Number(e.target.value) : undefined })}
-              className="field-input"
+              value={form.id}
+              onChange={(e) => update({ id: e.target.value })}
+              disabled={!isNew}
+              className="field-input disabled:bg-gray-50"
+              required
             />
           </Field>
-          <Field label="卒年">
-            <input
-              type="number"
-              value={form.deathYear ?? ""}
-              onChange={(e) => update({ deathYear: e.target.value ? Number(e.target.value) : undefined })}
-              className="field-input"
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="中文姓名">
+              <input value={form.name} onChange={(e) => update({ name: e.target.value })} className="field-input" required />
+            </Field>
+            <Field label="英文姓名">
+              <input value={form.nameEn} onChange={(e) => update({ nameEn: e.target.value })} className="field-input" />
+            </Field>
+          </div>
+
+          <Field label="头像 URL">
+            <input value={form.avatarUrl} onChange={(e) => update({ avatarUrl: e.target.value })} className="field-input" />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="出生年">
+              <input
+                type="number"
+                value={form.birthYear ?? ""}
+                onChange={(e) => update({ birthYear: e.target.value ? Number(e.target.value) : undefined })}
+                className="field-input"
+              />
+            </Field>
+            <Field label="卒年">
+              <input
+                type="number"
+                value={form.deathYear ?? ""}
+                onChange={(e) => update({ deathYear: e.target.value ? Number(e.target.value) : undefined })}
+                className="field-input"
+              />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="时代">
+              <input value={form.era} onChange={(e) => update({ era: e.target.value })} className="field-input" placeholder="近代" />
+            </Field>
+            <Field label="地域">
+              <input value={form.region} onChange={(e) => update({ region: e.target.value })} className="field-input" placeholder="西方" />
+            </Field>
+          </div>
+
+          <Field label="流派标签" hint="逗号分隔">
+            <input value={form.schoolText} onChange={(e) => update({ schoolText: e.target.value })} className="field-input" required />
+          </Field>
+
+          <Field label="一句话标签">
+            <input value={form.tagline} onChange={(e) => update({ tagline: e.target.value })} className="field-input" />
+          </Field>
+
+          <Field label="简介">
+            <textarea value={form.bio} onChange={(e) => update({ bio: e.target.value })} className="field-input min-h-24" />
+          </Field>
+        </section>
+
+        <section className="admin-form-section">
+          <h3 className="text-sm font-medium text-accent mb-1">对话与内容</h3>
+
+          <Field label="核心概念" hint="逗号分隔">
+            <input value={form.keyConceptsText} onChange={(e) => update({ keyConceptsText: e.target.value })} className="field-input" required />
+          </Field>
+
+          <Field label="代表著作" hint='JSON 数组，如 [{"title":"书名","year":1883,"intro":"简介"}]'>
+            <textarea value={form.worksJson} onChange={(e) => update({ worksJson: e.target.value })} className="field-input min-h-28 font-mono text-xs" />
+          </Field>
+
+          <Field label="开场白">
+            <input value={form.openingLine} onChange={(e) => update({ openingLine: e.target.value })} className="field-input" />
+          </Field>
+
+          <Field label="系统提示词（人设 Prompt）" hint="不对用户展示，用于 AI 对话">
+            <textarea
+              value={form.personaPrompt}
+              onChange={(e) => update({ personaPrompt: e.target.value })}
+              className="field-input min-h-48 lg:min-h-64"
+              required
             />
           </Field>
+        </section>
+
+        <div className="admin-form-full space-y-4">
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+            <button
+              type="button"
+              onClick={() => navigate("/admin/philosophers")}
+              className="admin-btn-ghost py-2.5 sm:px-6 order-2 sm:order-1"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="py-2.5 px-6 bg-primary text-white rounded-xl text-sm font-medium disabled:opacity-50 order-1 sm:order-2 sm:min-w-[120px]"
+            >
+              {saving ? "保存中…" : "保存"}
+            </button>
+          </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="时代">
-            <input value={form.era} onChange={(e) => update({ era: e.target.value })} className="field-input" placeholder="近代" />
-          </Field>
-          <Field label="地域">
-            <input value={form.region} onChange={(e) => update({ region: e.target.value })} className="field-input" placeholder="西方" />
-          </Field>
-        </div>
-
-        <Field label="流派标签" hint="逗号分隔">
-          <input value={form.schoolText} onChange={(e) => update({ schoolText: e.target.value })} className="field-input" required />
-        </Field>
-
-        <Field label="一句话标签">
-          <input value={form.tagline} onChange={(e) => update({ tagline: e.target.value })} className="field-input" />
-        </Field>
-
-        <Field label="简介">
-          <textarea value={form.bio} onChange={(e) => update({ bio: e.target.value })} className="field-input min-h-24" />
-        </Field>
-
-        <Field label="核心概念" hint="逗号分隔">
-          <input value={form.keyConceptsText} onChange={(e) => update({ keyConceptsText: e.target.value })} className="field-input" required />
-        </Field>
-
-        <Field label="代表著作" hint='JSON 数组，如 [{"title":"书名","year":1883,"intro":"简介"}]'>
-          <textarea value={form.worksJson} onChange={(e) => update({ worksJson: e.target.value })} className="field-input min-h-28 font-mono text-xs" />
-        </Field>
-
-        <Field label="开场白">
-          <input value={form.openingLine} onChange={(e) => update({ openingLine: e.target.value })} className="field-input" />
-        </Field>
-
-        <Field label="系统提示词（人设 Prompt）" hint="不对用户展示，用于 AI 对话">
-          <textarea
-            value={form.personaPrompt}
-            onChange={(e) => update({ personaPrompt: e.target.value })}
-            className="field-input min-h-40"
-            required
-          />
-        </Field>
-
-        {error && <p className="text-sm text-red-500">{error}</p>}
-
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full py-3 bg-primary text-white rounded-xl font-medium disabled:opacity-50"
-        >
-          {saving ? "保存中…" : "保存"}
-        </button>
       </form>
-    </div>
+    </AdminLayout>
   );
 }
 

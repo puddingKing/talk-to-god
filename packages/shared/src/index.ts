@@ -95,6 +95,9 @@ export interface UserAdmin {
   nickname?: string;
   guestId?: string;
   isGuest: boolean;
+  lastIp?: string;
+  region?: string;
+  lastSeenAt?: string;
   createdAt: string;
   conversationCount: number;
 }

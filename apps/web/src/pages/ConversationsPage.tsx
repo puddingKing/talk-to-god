@@ -52,7 +52,7 @@ export default function ConversationsPage() {
   };
 
   return (
-    <div className="px-4 pt-5 pb-4">
+    <div className="px-0 pt-5 pb-4 md:pt-8">
       <header className="mb-5">
         <h1 className="text-lg font-semibold text-text">我的会话</h1>
         <p className="text-xs text-text-muted mt-0.5">与哲学家的对话记录</p>
@@ -81,11 +81,12 @@ export default function ConversationsPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between mb-1">
+        <>
+          <div className="flex items-center justify-between mb-3">
             <h2 className="section-title">最近对话</h2>
             <span className="text-[11px] text-text-light">{conversations.length} 条</span>
           </div>
+          <div className="card-grid">
           {conversations.map((c) => (
             <div key={c.id} className="glass-card-hover flex items-center gap-3 p-3.5">
               <Link to={`/chat/${c.id}`} className="flex items-center gap-3 flex-1 min-w-0">
@@ -113,18 +114,19 @@ export default function ConversationsPage() {
               </button>
             </div>
           ))}
-        </div>
+          </div>
+        </>
       )}
 
       {error && (
-        <p className="fixed bottom-24 left-4 right-4 max-w-lg mx-auto text-center text-sm text-red-500 bg-red-50 rounded-xl py-2 px-3">
+        <p className="fixed bottom-24 md:bottom-8 left-4 right-4 md:left-64 app-container text-center text-sm text-red-500 bg-red-50 rounded-xl py-2 px-3 z-30">
           {error}
         </p>
       )}
 
       {pendingDelete && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-end justify-center z-50">
-          <div className="bg-white rounded-t-3xl w-full max-w-lg p-5 pb-8 shadow-card">
+        <div className="modal-overlay">
+          <div className="modal-panel">
             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
             <h3 className="font-semibold text-center mb-2">删除会话</h3>
             <p className="text-sm text-text-muted text-center mb-5">

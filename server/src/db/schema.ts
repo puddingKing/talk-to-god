@@ -24,6 +24,9 @@ export const users = sqliteTable("users", {
   phone: text("phone"),
   passwordHash: text("password_hash"),
   nickname: text("nickname"),
+  lastIp: text("last_ip"),
+  region: text("region"),
+  lastSeenAt: text("last_seen_at"),
   createdAt: text("created_at").notNull(),
 });
 

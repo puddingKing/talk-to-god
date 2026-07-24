@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "../db/index.js";
 import { conversations, users } from "../db/schema.js";
 import { verifyToken } from "./auth.js";
+import { resolveGuestGeo } from "./client-ip.js";
 
 export type DbUser = typeof users.$inferSelect;
 
@@ -26,15 +27,49 @@ export function getBearerToken(request: FastifyRequest): string | null {
   return auth.slice(7);
 }
 
-export function getOrCreateGuestUser(guestId: string): DbUser {
+function touchGuestMeta(request: FastifyRequest, user: DbUser): DbUser {
+  if (user.phone) return user;
+
+  const { ip, region } = resolveGuestGeo(request);
+  const now = new Date().toISOString();
+  const shouldUpdate =
+    (ip && ip !== user.lastIp) ||
+    (region && region !== user.region) ||
+    !user.lastSeenAt;
+
+  if (!shouldUpdate) return user;
+
+  db.update(users)
+    .set({
+      lastIp: ip ?? user.lastIp,
+      region: region ?? user.region,
+      lastSeenAt: now,
+    })
+    .where(eq(users.id, user.id))
+    .run();
+
+  return db.select().from(users).where(eq(users.id, user.id)).get()!;
+}
+
+export function getOrCreateGuestUser(guestId: string, request: FastifyRequest): DbUser {
   let user = db.select().from(users).where(eq(users.guestId, guestId)).get();
   if (!user) {
     const id = uuidv4();
     const now = new Date().toISOString();
-    db.insert(users).values({ id, guestId, createdAt: now }).run();
+    const { ip, region } = resolveGuestGeo(request);
+    db.insert(users)
+      .values({
+        id,
+        guestId,
+        lastIp: ip,
+        region,
+        lastSeenAt: now,
+        createdAt: now,
+      })
+      .run();
     user = db.select().from(users).where(eq(users.id, id)).get()!;
   }
-  return user;
+  return touchGuestMeta(request, user);
 }
 
 export function resolveCurrentUser(request: FastifyRequest): DbUser {
@@ -46,7 +81,7 @@ export function resolveCurrentUser(request: FastifyRequest): DbUser {
       if (user) return user;
     }
   }
-  return getOrCreateGuestUser(getGuestId(request));
+  return getOrCreateGuestUser(getGuestId(request), request);
 }
 
 export function mergeGuestIntoUser(guestId: string, targetUserId: string) {

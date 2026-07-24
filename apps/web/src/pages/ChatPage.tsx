@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import type { GuestQuota, Message } from "@talk-to-god/shared";
 import { useAuth } from "../context/AuthContext";
+import AppSidebar from "../components/AppSidebar";
 import { fetchGuestQuota, fetchMessages, sendMessageStream, fetchConversations } from "../lib/api";
 
 export default function ChatPage() {
@@ -112,7 +113,10 @@ export default function ChatPage() {
   const isEmpty = messages.length === 0 && !streaming;
 
   return (
-    <div className="flex flex-col h-dvh max-w-lg mx-auto bg-chat-gradient">
+    <div className="min-h-dvh bg-chat-gradient">
+      <AppSidebar />
+      <div className="flex flex-col h-dvh md:ml-60">
+        <div className="flex flex-col h-full mx-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl px-4 md:px-6 lg:px-8">
       <header className="flex items-center gap-3 px-4 py-3 bg-white/60 backdrop-blur-md border-b border-white/50 shrink-0">
         <button
           onClick={() => navigate("/conversations")}
@@ -247,6 +251,8 @@ export default function ChatPage() {
               />
             </svg>
           </button>
+        </div>
+      </div>
         </div>
       </div>
     </div>

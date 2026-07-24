@@ -38,7 +38,7 @@ export default function ProfilePage() {
 
   if (user && !user.isGuest) {
     return (
-      <div className="px-4 pt-5 pb-4">
+      <div className="px-0 pt-5 pb-4 md:pt-8">
         <header className="mb-5">
           <h1 className="text-lg font-semibold text-text">我的</h1>
         </header>
@@ -68,7 +68,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="px-4 pt-5 pb-4">
+    <div className="px-0 pt-5 pb-4 md:pt-8">
       <header className="mb-5">
         <h1 className="text-lg font-semibold text-text">我的</h1>
         <p className="text-xs text-text-muted mt-0.5">登录后保存对话，跨设备同步</p>
