@@ -116,39 +116,43 @@ export default function ChatPage() {
     <div className="min-h-dvh bg-chat-gradient">
       <AppSidebar />
       <div className="flex flex-col h-dvh md:ml-60">
-        <div className="flex flex-col h-full mx-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl px-4 md:px-6 lg:px-8">
-      <header className="flex items-center gap-3 px-4 py-3 bg-white/60 backdrop-blur-md border-b border-white/50 shrink-0">
-        <button
-          onClick={() => navigate("/conversations")}
-          className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-text-muted shadow-sm"
-        >
-          ←
-        </button>
-        <button
-          onClick={() => philosopherId && navigate(`/philosopher/${philosopherId}`)}
-          className="flex items-center gap-2.5 flex-1"
-        >
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shadow-sm">
-            <span className="text-sm font-serif text-white">{philosopherName.slice(0, 1) || "?"}</span>
+        <header className="w-full flex items-center gap-3 px-4 md:px-6 lg:px-8 py-3 bg-white/60 backdrop-blur-md border-b border-white/50 shrink-0">
+          <div className="mx-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl flex items-center gap-3">
+            <button
+              onClick={() => navigate("/conversations")}
+              className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-text-muted shadow-sm"
+            >
+              ←
+            </button>
+            <button
+              onClick={() => philosopherId && navigate(`/philosopher/${philosopherId}`)}
+              className="flex items-center gap-2.5 flex-1"
+            >
+              <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shadow-sm">
+                <span className="text-sm font-serif text-white">{philosopherName.slice(0, 1) || "?"}</span>
+              </div>
+              <div className="text-left">
+                <span className="font-semibold text-sm text-text block">{philosopherName || "对话中"}</span>
+                <span className="text-[10px] text-text-light">AI 思辨对话</span>
+              </div>
+            </button>
           </div>
-          <div className="text-left">
-            <span className="font-semibold text-sm text-text block">{philosopherName || "对话中"}</span>
-            <span className="text-[10px] text-text-light">AI 思辨对话</span>
+        </header>
+
+        {isGuest && quota && !limitReached && (
+          <div className="w-full px-4 md:px-6 lg:px-8 py-2 bg-primary/10 text-xs text-primary text-center shrink-0 border-b border-primary/10">
+            <div className="mx-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl">
+              游客模式：还可发送 {quota.remaining} 条消息，
+              <Link to="/profile" className="underline font-medium">
+                登录
+              </Link>
+              后解锁无限对话
+            </div>
           </div>
-        </button>
-      </header>
+        )}
 
-      {isGuest && quota && !limitReached && (
-        <div className="px-4 py-2 bg-primary/10 text-xs text-primary text-center shrink-0 border-b border-primary/10">
-          游客模式：还可发送 {quota.remaining} 条消息，
-          <Link to="/profile" className="underline font-medium">
-            登录
-          </Link>
-          后解锁无限对话
-        </div>
-      )}
-
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        <div className="flex flex-col flex-1 min-h-0 mx-auto w-full max-w-lg md:max-w-3xl lg:max-w-4xl px-4 md:px-6 lg:px-8">
+          <div className="flex-1 overflow-y-auto py-4 space-y-4">
         {isEmpty && (
           <div className="flex flex-col items-center pt-8 pb-4">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-200 via-purple-200 to-cyan-200 shadow-card mb-5 flex items-center justify-center">
@@ -222,9 +226,9 @@ export default function ChatPage() {
         )}
 
         <div ref={bottomRef} />
-      </div>
+          </div>
 
-      <div className="px-4 py-3 bg-white/70 backdrop-blur-xl border-t border-white/60 shrink-0">
+          <div className="py-3 bg-white/70 backdrop-blur-xl border-t border-white/60 shrink-0 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
         <div className="flex gap-2 items-center">
           <input
             type="text"
@@ -252,7 +256,7 @@ export default function ChatPage() {
             </svg>
           </button>
         </div>
-      </div>
+          </div>
         </div>
       </div>
     </div>

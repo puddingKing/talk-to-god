@@ -2,6 +2,8 @@ export interface RepresentativeWork {
   title: string;
   year?: number;
   intro?: string;
+  /** 微信读书或其他阅读链接；未填则按书名搜索微信读书 */
+  url?: string;
 }
 
 export interface Philosopher {

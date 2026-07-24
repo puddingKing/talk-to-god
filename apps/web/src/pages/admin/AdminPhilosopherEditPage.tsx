@@ -195,7 +195,7 @@ export default function AdminPhilosopherEditPage() {
             <input value={form.keyConceptsText} onChange={(e) => update({ keyConceptsText: e.target.value })} className="field-input" required />
           </Field>
 
-          <Field label="代表著作" hint='JSON 数组，如 [{"title":"书名","year":1883,"intro":"简介"}]'>
+          <Field label="代表著作" hint='JSON 数组，如 [{"title":"书名","year":1883,"intro":"简介","url":"https://weread.qq.com/web/bookDetail/xxx"}]，url 可选，未填则按书名搜索微信读书'>
             <textarea value={form.worksJson} onChange={(e) => update({ worksJson: e.target.value })} className="field-input min-h-28 font-mono text-xs" />
           </Field>
 

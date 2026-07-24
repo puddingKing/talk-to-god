@@ -64,8 +64,8 @@ export default function PhilosopherDetailPage() {
       : null;
 
   return (
-    <div className="pb-28 md:pb-8">
-      <div className="bg-hero-gradient px-0 md:rounded-2xl pt-6 pb-8 relative overflow-hidden">
+    <div className="pb-44 md:pb-8">
+      <div className="page-hero bg-hero-gradient pt-6 pb-8 relative overflow-hidden">
         <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -left-4 bottom-0 w-24 h-24 rounded-full bg-white/10 blur-xl" />
 
@@ -148,22 +148,42 @@ export default function PhilosopherDetailPage() {
 
         {tab === "works" && philosopher.representativeWorks.length > 0 && (
           <div className="space-y-2">
-            {philosopher.representativeWorks.map((w) => (
-              <div key={w.title} className="glass-card p-4 flex gap-3 items-start">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-violet-200 flex items-center justify-center shrink-0">
-                  <span className="text-primary text-sm">📖</span>
-                </div>
-                <div>
-                  <span className="font-medium text-sm text-text">{w.title}</span>
-                  {w.year && (
-                    <span className="text-text-light ml-2 text-xs">
-                      ({w.year < 0 ? `前${Math.abs(w.year)}` : w.year})
-                    </span>
-                  )}
-                  {w.intro && <p className="text-xs text-text-muted mt-1 leading-relaxed">{w.intro}</p>}
-                </div>
-              </div>
-            ))}
+            {philosopher.representativeWorks.map((w) => {
+              const href =
+                w.url ||
+                `https://weread.qq.com/web/search/books?keyword=${encodeURIComponent(w.title)}`;
+              return (
+                <a
+                  key={w.title}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-card glass-card-hover p-4 flex gap-3 items-start group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-violet-200 flex items-center justify-center shrink-0">
+                    <span className="text-primary text-sm">📖</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="font-medium text-sm text-text group-hover:text-primary transition-colors">
+                          {w.title}
+                        </span>
+                        {w.year && (
+                          <span className="text-text-light ml-2 text-xs">
+                            ({w.year < 0 ? `前${Math.abs(w.year)}` : w.year})
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-text-muted shrink-0 pt-0.5 group-hover:text-primary transition-colors">
+                        微信读书 ↗
+                      </span>
+                    </div>
+                    {w.intro && <p className="text-xs text-text-muted mt-1 leading-relaxed">{w.intro}</p>}
+                  </div>
+                </a>
+              );
+            })}
           </div>
         )}
 
