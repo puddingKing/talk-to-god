@@ -28,32 +28,38 @@ export default function ProfilePage() {
   };
 
   if (loading) {
-    return <p className="text-center text-text-muted py-12">加载中…</p>;
+    return (
+      <div className="flex flex-col items-center py-20 gap-3">
+        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <p className="text-sm text-text-muted">加载中…</p>
+      </div>
+    );
   }
 
   if (user && !user.isGuest) {
     return (
-      <div className="px-4 pt-6 pb-4">
-        <header className="mb-6">
-          <h1 className="font-serif text-2xl font-bold text-primary">我的</h1>
+      <div className="px-4 pt-5 pb-4">
+        <header className="mb-5">
+          <h1 className="text-lg font-semibold text-text">我的</h1>
         </header>
 
-        <div className="bg-surface rounded-xl p-5 border border-gray-100 shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl font-serif text-primary">
+        <div className="glass-card p-6 text-center">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center mx-auto mb-4 shadow-fab">
+            <span className="text-3xl font-serif text-white">
               {(user.nickname || user.phone || "?").slice(0, 1)}
             </span>
           </div>
-          <h2 className="text-center font-medium text-lg">{user.nickname || "哲学对话者"}</h2>
-          <p className="text-center text-sm text-text-muted mt-1">{user.phone}</p>
-          <p className="text-center text-xs text-text-muted/70 mt-4">
+          <h2 className="font-semibold text-lg text-text">{user.nickname || "哲学对话者"}</h2>
+          <p className="text-sm text-text-muted mt-1">{user.phone}</p>
+          <div className="mt-4 inline-flex status-running">已登录</div>
+          <p className="text-xs text-text-light mt-4 leading-relaxed">
             登录后会话将长期保存，可在不同设备同步
           </p>
         </div>
 
         <button
           onClick={logout}
-          className="w-full mt-6 py-3 rounded-xl border border-gray-200 text-text-muted text-sm"
+          className="w-full mt-5 py-3 rounded-2xl border border-white/80 bg-white/60 text-text-muted text-sm hover:bg-white/80 transition-colors"
         >
           退出登录
         </button>
@@ -62,65 +68,65 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="px-4 pt-6 pb-4">
-      <header className="mb-6">
-        <h1 className="font-serif text-2xl font-bold text-primary">我的</h1>
-        <p className="text-sm text-text-muted mt-1">登录后保存对话，跨设备同步</p>
+    <div className="px-4 pt-5 pb-4">
+      <header className="mb-5">
+        <h1 className="text-lg font-semibold text-text">我的</h1>
+        <p className="text-xs text-text-muted mt-0.5">登录后保存对话，跨设备同步</p>
       </header>
 
-      <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+      <div className="flex mb-5 p-1 bg-white/60 backdrop-blur-md rounded-2xl border border-white/60">
         <button
           onClick={() => setMode("login")}
-          className={`flex-1 py-2 text-sm rounded-md ${
-            mode === "login" ? "bg-surface shadow-sm text-primary font-medium" : "text-text-muted"
+          className={`flex-1 py-2.5 text-sm rounded-xl transition-all ${
+            mode === "login" ? "bg-primary text-white shadow-sm font-medium" : "text-text-muted"
           }`}
         >
           登录
         </button>
         <button
           onClick={() => setMode("register")}
-          className={`flex-1 py-2 text-sm rounded-md ${
-            mode === "register" ? "bg-surface shadow-sm text-primary font-medium" : "text-text-muted"
+          className={`flex-1 py-2.5 text-sm rounded-xl transition-all ${
+            mode === "register" ? "bg-primary text-white shadow-sm font-medium" : "text-text-muted"
           }`}
         >
           注册
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="glass-card p-5 space-y-4">
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">手机号</label>
+          <label className="block text-xs text-text-muted mb-1.5 font-medium">手机号</label>
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="11 位手机号"
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="field-input"
             required
           />
         </div>
 
         {mode === "register" && (
           <div>
-            <label className="block text-xs text-text-muted mb-1.5">昵称（可选）</label>
+            <label className="block text-xs text-text-muted mb-1.5 font-medium">昵称（可选）</label>
             <input
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="如何称呼你"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="field-input"
             />
           </div>
         )}
 
         <div>
-          <label className="block text-xs text-text-muted mb-1.5">密码</label>
+          <label className="block text-xs text-text-muted mb-1.5 font-medium">密码</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="至少 6 位"
-            className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="field-input"
             required
             minLength={6}
           />
@@ -128,16 +134,12 @@ export default function ProfilePage() {
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full py-3 bg-primary text-white rounded-xl font-medium disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className="w-full btn-primary !py-3.5 !rounded-2xl">
           {submitting ? "处理中…" : mode === "login" ? "登录" : "注册"}
         </button>
       </form>
 
-      <p className="text-xs text-text-muted/70 text-center mt-6">
+      <p className="text-xs text-text-light text-center mt-5 leading-relaxed">
         未登录时以游客身份体验，会话仅保存在当前浏览器
       </p>
     </div>

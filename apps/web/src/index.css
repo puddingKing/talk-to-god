@@ -3,12 +3,50 @@
 @tailwind utilities;
 
 body {
-  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-  background-color: #faf8f5;
-  color: #2c2c2c;
+  font-family: "PingFang SC", "SF Pro Display", "Microsoft YaHei", sans-serif;
+  background: #f4f8ff;
+  color: #1e293b;
   -webkit-font-smoothing: antialiased;
 }
 
-.field-input {
-  @apply w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30;
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md rounded-2xl border border-white/60 shadow-card;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-200 hover:shadow-card-hover hover:bg-white/90;
+  }
+
+  .pill {
+    @apply shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors;
+  }
+
+  .pill-active {
+    @apply pill bg-primary text-white shadow-sm;
+  }
+
+  .pill-inactive {
+    @apply pill bg-white/70 text-text-muted border border-white/80;
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 bg-primary text-white rounded-full text-sm font-medium shadow-sm hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50;
+  }
+
+  .field-input {
+    @apply w-full px-4 py-3 rounded-2xl border border-white/80 bg-white/70 backdrop-blur-sm text-sm text-text placeholder:text-text-light focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30;
+  }
+
+  .section-title {
+    @apply text-sm font-semibold text-text;
+  }
+
+  .status-running {
+    @apply text-[10px] px-2 py-0.5 rounded-full bg-tag-green text-tag-green-text font-medium;
+  }
+
+  .status-paused {
+    @apply text-[10px] px-2 py-0.5 rounded-full bg-red-50 text-red-500 font-medium;
+  }
 }

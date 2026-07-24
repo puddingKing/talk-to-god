@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
     <div className="min-h-dvh bg-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-surface rounded-xl border border-gray-100 p-6 shadow-sm">
         <h1 className="font-serif text-xl font-bold text-accent text-center mb-1">后台管理</h1>
-        <p className="text-xs text-text-muted text-center mb-6">与哲对话 · 哲学家配置</p>
+        <p className="text-xs text-text-muted text-center mb-6">与哲对话 · 哲学家与用户配置</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs text-text-muted mb-1.5">管理员密钥</label>

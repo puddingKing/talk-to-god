@@ -1,4 +1,4 @@
-import type { PhilosopherAdmin } from "@talk-to-god/shared";
+import type { PhilosopherAdmin, UserAdmin, UserAdminUpdate } from "@talk-to-god/shared";
 import { getAdminKey, clearAdminKey } from "./admin";
 import { apiUrl } from "./paths";
 
@@ -60,6 +60,36 @@ export async function updateAdminPhilosopher(
 
 export async function deleteAdminPhilosopher(id: string): Promise<void> {
   const res = await fetch(apiUrl(`/api/admin/philosophers/${id}`), {
+    method: "DELETE",
+    headers: adminHeaders(),
+  });
+  if (!res.ok) await parseError(res, "删除失败");
+}
+
+export async function fetchAdminUsers(): Promise<UserAdmin[]> {
+  const res = await fetch(apiUrl("/api/admin/users"), { headers: adminHeaders() });
+  if (!res.ok) await parseError(res, "获取用户列表失败");
+  return res.json();
+}
+
+export async function fetchAdminUser(id: string): Promise<UserAdmin> {
+  const res = await fetch(apiUrl(`/api/admin/users/${id}`), { headers: adminHeaders() });
+  if (!res.ok) await parseError(res, "获取用户详情失败");
+  return res.json();
+}
+
+export async function updateAdminUser(id: string, data: UserAdminUpdate): Promise<UserAdmin> {
+  const res = await fetch(apiUrl(`/api/admin/users/${id}`), {
+    method: "PUT",
+    headers: adminHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) await parseError(res, "更新失败");
+  return res.json();
+}
+
+export async function deleteAdminUser(id: string): Promise<void> {
+  const res = await fetch(apiUrl(`/api/admin/users/${id}`), {
     method: "DELETE",
     headers: adminHeaders(),
   });

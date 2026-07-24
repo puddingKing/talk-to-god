@@ -88,3 +88,18 @@ export interface GuestQuota {
   limit: number;
   remaining: number;
 }
+
+export interface UserAdmin {
+  id: string;
+  phone?: string;
+  nickname?: string;
+  guestId?: string;
+  isGuest: boolean;
+  createdAt: string;
+  conversationCount: number;
+}
+
+export interface UserAdminUpdate {
+  nickname?: string;
+  password?: string;
+}

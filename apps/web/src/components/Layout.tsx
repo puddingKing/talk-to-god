@@ -4,7 +4,7 @@ function GalleryIcon({ active }: { active: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
-        d="M4 6a2 2 0 012-2h4v16H6a2 2 0 01-2-2V6zm8-2h6a2 2 0 012 2v12a2 2 0 01-2 2h-6V4z"
+        d="M3 9.5 12 3l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V9.5z"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinejoin="round"
@@ -48,8 +48,6 @@ function ProfileIcon({ active }: { active: boolean }) {
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
-        fill={active ? "currentColor" : "none"}
-        fillOpacity={active ? 0.12 : 0}
       />
     </svg>
   );
@@ -60,18 +58,41 @@ function NavItem({
   end,
   label,
   icon: Icon,
+  elevated,
 }: {
   to: string;
   end?: boolean;
   label: string;
   icon: React.ComponentType<{ active: boolean }>;
+  elevated?: boolean;
 }) {
+  if (elevated) {
+    return (
+      <NavLink to={to} className="relative -mt-5 flex flex-col items-center">
+        {({ isActive }) => (
+          <>
+            <div
+              className={`w-14 h-14 rounded-full flex items-center justify-center shadow-fab transition-transform ${
+                isActive ? "bg-primary scale-105" : "bg-primary/90"
+              } text-white`}
+            >
+              <Icon active />
+            </div>
+            <span className={`text-[10px] mt-1 ${isActive ? "text-primary font-medium" : "text-text-muted"}`}>
+              {label}
+            </span>
+          </>
+        )}
+      </NavLink>
+    );
+  }
+
   return (
     <NavLink
       to={to}
       end={end}
       className={({ isActive }) =>
-        `flex-1 flex flex-col items-center justify-center gap-0.5 py-2 text-xs ${
+        `flex-1 flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] ${
           isActive ? "text-primary font-medium" : "text-text-muted"
         }`
       }
@@ -88,18 +109,18 @@ function NavItem({
 
 export default function Layout() {
   return (
-    <div className="flex flex-col min-h-dvh max-w-lg mx-auto bg-bg">
-      <main className="flex-1 overflow-y-auto pb-16">
+    <div className="flex flex-col min-h-dvh max-w-lg mx-auto bg-page-gradient">
+      <main className="flex-1 overflow-y-auto pb-20">
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-surface border-t border-gray-200 flex">
+      <nav className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-white/75 backdrop-blur-xl border-t border-white/60 shadow-nav flex items-end px-2 pb-safe">
         <NavItem to="/" end label="图鉴" icon={GalleryIcon} />
-        <NavItem to="/conversations" label="会话" icon={ChatIcon} />
+        <NavItem to="/conversations" label="会话" icon={ChatIcon} elevated />
         <NavItem to="/profile" label="我的" icon={ProfileIcon} />
       </nav>
 
-      <p className="fixed bottom-16 left-0 right-0 text-center text-[10px] text-text-muted/60 pointer-events-none">
+      <p className="fixed bottom-[4.5rem] left-0 right-0 text-center text-[10px] text-text-light pointer-events-none">
         内容由 AI 生成，观点不代表平台立场
       </p>
     </div>

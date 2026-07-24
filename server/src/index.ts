@@ -6,6 +6,7 @@ import { philosopherRoutes, conversationRoutes } from "./routes/philosophers.js"
 import { chatRoutes } from "./routes/chat.js";
 import { authRoutes } from "./routes/auth.js";
 import { adminPhilosopherRoutes } from "./routes/admin/philosophers.js";
+import { adminUserRoutes } from "./routes/admin/users.js";
 
 const { port: PORT, corsOrigin } = getConfig();
 
@@ -26,6 +27,7 @@ async function main() {
   await app.register(chatRoutes);
   await app.register(authRoutes);
   await app.register(adminPhilosopherRoutes);
+  await app.register(adminUserRoutes);
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
   console.log(`API 服务已启动: http://localhost:${PORT}`);

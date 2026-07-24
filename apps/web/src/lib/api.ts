@@ -71,8 +71,12 @@ export async function deleteConversation(id: string): Promise<void> {
   const res = await fetch(apiUrl(`/api/conversations/${id}`), {
     method: "DELETE",
     headers: apiHeaders(),
+    body: JSON.stringify({})
   });
-  if (!res.ok) throw new Error("删除会话失败");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "删除会话失败" }));
+    throw new Error(err.error || "删除会话失败");
+  }
 }
 
 export async function login(phone: string, password: string): Promise<AuthResponse> {

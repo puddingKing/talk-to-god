@@ -9,6 +9,8 @@ import ChatPage from "./pages/ChatPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminPhilosophersPage from "./pages/admin/AdminPhilosophersPage";
 import AdminPhilosopherEditPage from "./pages/admin/AdminPhilosopherEditPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminUserEditPage from "./pages/admin/AdminUserEditPage";
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
       <Route path="/admin" element={<AdminLoginPage />} />
       <Route path="/admin/philosophers" element={<AdminPhilosophersPage />} />
       <Route path="/admin/philosophers/:id" element={<AdminPhilosopherEditPage />} />
+      <Route path="/admin/users" element={<AdminUsersPage />} />
+      <Route path="/admin/users/:id" element={<AdminUserEditPage />} />
     </Routes>
   );
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { PhilosopherAdmin } from "@talk-to-god/shared";
-import { clearAdminKey, getAdminKey } from "../../lib/admin";
+import AdminLayout from "../../components/AdminLayout";
+import { getAdminKey } from "../../lib/admin";
 import { deleteAdminPhilosopher, fetchAdminPhilosophers } from "../../lib/admin-api";
 
 export default function AdminPhilosophersPage() {
@@ -31,31 +32,16 @@ export default function AdminPhilosophersPage() {
     load();
   };
 
-  const handleLogout = () => {
-    clearAdminKey();
-    navigate("/admin");
-  };
-
   return (
-    <div className="min-h-dvh bg-bg max-w-2xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-bold text-accent">哲学家管理</h1>
-          <p className="text-xs text-text-muted mt-1">共 {list.length} 位哲学家</p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            to="/admin/philosophers/new"
-            className="px-4 py-2 bg-primary text-white rounded-lg text-sm"
-          >
-            新增
-          </Link>
-          <button onClick={handleLogout} className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-text-muted">
-            退出
-          </button>
-        </div>
-      </div>
-
+    <AdminLayout
+      title="哲学家管理"
+      subtitle={`共 ${list.length} 位哲学家`}
+      action={
+        <Link to="/admin/philosophers/new" className="px-4 py-2 bg-primary text-white rounded-lg text-sm">
+          新增
+        </Link>
+      }
+    >
       {loading ? (
         <p className="text-center text-text-muted py-12">加载中…</p>
       ) : (
@@ -87,6 +73,6 @@ export default function AdminPhilosophersPage() {
           ))}
         </div>
       )}
-    </div>
+    </AdminLayout>
   );
 }
