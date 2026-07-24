@@ -1,20 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { db } from "../db/index.js";
-import { philosophers, conversations, messages, users } from "../db/schema.js";
+import { philosophers, conversations, messages } from "../db/schema.js";
 import { eq, desc, and } from "drizzle-orm";
 import { mapPhilosopher } from "../services/philosopher.js";
+import { resolveCurrentUser } from "../services/user.js";
 import { v4 as uuidv4 } from "uuid";
-
-function getOrCreateGuestUser(guestId: string) {
-  let user = db.select().from(users).where(eq(users.guestId, guestId)).get();
-  if (!user) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.insert(users).values({ id, guestId, createdAt: now }).run();
-    user = { id, guestId, createdAt: now };
-  }
-  return user;
-}
 
 export async function philosopherRoutes(app: FastifyInstance) {
   app.get("/api/philosophers", async (request) => {
@@ -47,8 +37,7 @@ export async function philosopherRoutes(app: FastifyInstance) {
 
 export async function conversationRoutes(app: FastifyInstance) {
   app.get("/api/conversations", async (request) => {
-    const guestId = (request.headers["x-guest-id"] as string) || "anonymous";
-    const user = getOrCreateGuestUser(guestId);
+    const user = resolveCurrentUser(request);
 
     const convs = db
       .select()
@@ -80,8 +69,7 @@ export async function conversationRoutes(app: FastifyInstance) {
   });
 
   app.post("/api/conversations", async (request, reply) => {
-    const guestId = (request.headers["x-guest-id"] as string) || "anonymous";
-    const user = getOrCreateGuestUser(guestId);
+    const user = resolveCurrentUser(request);
     const { philosopherId } = request.body as { philosopherId: string };
 
     const phil = db.select().from(philosophers).where(eq(philosophers.id, philosopherId)).get();
@@ -114,8 +102,7 @@ export async function conversationRoutes(app: FastifyInstance) {
 
   app.get("/api/conversations/:id/messages", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const guestId = (request.headers["x-guest-id"] as string) || "anonymous";
-    const user = getOrCreateGuestUser(guestId);
+    const user = resolveCurrentUser(request);
 
     const conv = db.select().from(conversations).where(and(eq(conversations.id, id), eq(conversations.userId, user.id))).get();
     if (!conv) return reply.status(404).send({ error: "会话不存在" });
@@ -138,8 +125,7 @@ export async function conversationRoutes(app: FastifyInstance) {
 
   app.delete("/api/conversations/:id", async (request, reply) => {
     const { id } = request.params as { id: string };
-    const guestId = (request.headers["x-guest-id"] as string) || "anonymous";
-    const user = getOrCreateGuestUser(guestId);
+    const user = resolveCurrentUser(request);
 
     const conv = db.select().from(conversations).where(and(eq(conversations.id, id), eq(conversations.userId, user.id))).get();
     if (!conv) return reply.status(404).send({ error: "会话不存在" });

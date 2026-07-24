@@ -12,13 +12,15 @@ export function normalizeBaseUrl(baseUrl: string): string {
 
 export function getConfig() {
   return {
-    port: Number(process.env.PORT) || 3001,
-    corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    port: Number(process.env.PORT) || 3002,
+    corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5180",
     databaseUrl: process.env.DATABASE_URL || "./data/talk-to-god.db",
     llm: {
       apiKey: process.env.LLM_API_KEY || "",
       baseUrl: normalizeBaseUrl(process.env.LLM_BASE_URL || "https://api.deepseek.com"),
       model: process.env.LLM_MODEL || "deepseek-v4-flash",
     },
+    jwtSecret: process.env.JWT_SECRET || "dev-secret-change-in-production",
+    guestMessageLimit: Number(process.env.GUEST_MESSAGE_LIMIT) || 3,
   };
 }

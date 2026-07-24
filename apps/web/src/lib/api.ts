@@ -1,10 +1,21 @@
-import type { Philosopher, Conversation, Message } from "@talk-to-god/shared";
+import type { Philosopher, Conversation, Message, AuthUser, AuthResponse, GuestQuota } from "@talk-to-god/shared";
 import { getGuestId } from "./guest";
+import { getToken } from "./auth";
 
-const headers = () => ({
-  "Content-Type": "application/json",
-  "X-Guest-Id": getGuestId(),
-});
+function apiHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "X-Guest-Id": getGuestId(),
+  };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
+async function parseError(res: Response, fallback: string): Promise<never> {
+  const err = await res.json().catch(() => ({ error: fallback }));
+  throw new Error(err.error || fallback);
+}
 
 export async function fetchPhilosophers(params?: {
   era?: string;
@@ -28,7 +39,7 @@ export async function fetchPhilosopher(id: string): Promise<Philosopher> {
 }
 
 export async function fetchConversations(): Promise<Conversation[]> {
-  const res = await fetch("/api/conversations", { headers: headers() });
+  const res = await fetch("/api/conversations", { headers: apiHeaders() });
   if (!res.ok) throw new Error("获取会话列表失败");
   return res.json();
 }
@@ -40,7 +51,7 @@ export async function createConversation(philosopherId: string): Promise<{
 }> {
   const res = await fetch("/api/conversations", {
     method: "POST",
-    headers: headers(),
+    headers: apiHeaders(),
     body: JSON.stringify({ philosopherId }),
   });
   if (!res.ok) throw new Error("创建会话失败");
@@ -49,7 +60,7 @@ export async function createConversation(philosopherId: string): Promise<{
 
 export async function fetchMessages(conversationId: string): Promise<Message[]> {
   const res = await fetch(`/api/conversations/${conversationId}/messages`, {
-    headers: headers(),
+    headers: apiHeaders(),
   });
   if (!res.ok) throw new Error("获取消息失败");
   return res.json();
@@ -58,9 +69,45 @@ export async function fetchMessages(conversationId: string): Promise<Message[]> 
 export async function deleteConversation(id: string): Promise<void> {
   const res = await fetch(`/api/conversations/${id}`, {
     method: "DELETE",
-    headers: headers(),
+    headers: apiHeaders(),
   });
   if (!res.ok) throw new Error("删除会话失败");
+}
+
+export async function login(phone: string, password: string): Promise<AuthResponse> {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: apiHeaders(),
+    body: JSON.stringify({ phone, password }),
+  });
+  if (!res.ok) await parseError(res, "登录失败");
+  return res.json();
+}
+
+export async function register(
+  phone: string,
+  password: string,
+  nickname?: string
+): Promise<AuthResponse> {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: apiHeaders(),
+    body: JSON.stringify({ phone, password, nickname }),
+  });
+  if (!res.ok) await parseError(res, "注册失败");
+  return res.json();
+}
+
+export async function fetchMe(): Promise<AuthUser> {
+  const res = await fetch("/api/auth/me", { headers: apiHeaders() });
+  if (!res.ok) await parseError(res, "未登录");
+  return res.json();
+}
+
+export async function fetchGuestQuota(): Promise<GuestQuota> {
+  const res = await fetch("/api/auth/guest-quota", { headers: apiHeaders() });
+  if (!res.ok) throw new Error("获取游客额度失败");
+  return res.json();
 }
 
 export async function sendMessageStream(
@@ -72,7 +119,7 @@ export async function sendMessageStream(
 ): Promise<void> {
   const res = await fetch(`/api/chat/${conversationId}`, {
     method: "POST",
-    headers: headers(),
+    headers: apiHeaders(),
     body: JSON.stringify({ content }),
   });
 

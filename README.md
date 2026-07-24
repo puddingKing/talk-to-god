@@ -42,8 +42,8 @@ pnpm db:seed
 pnpm dev
 
 # 或分别启动
-pnpm dev:server   # http://localhost:3001
-pnpm dev:web      # http://localhost:5173
+pnpm dev:server   # http://localhost:3002
+pnpm dev:web      # http://localhost:5180
 ```
 
 ## MVP 功能
@@ -53,6 +53,7 @@ pnpm dev:web      # http://localhost:5173
 - [x] 会话列表与历史记录
 - [x] 游客模式（localStorage 标识）
 - [x] 8 位种子哲学家（尼采、苏格拉底、孔子、老子、柏拉图、康德、庄子、萨特）
+- [x] 登录/注册（手机号 + 密码，JWT，游客会话合并）
 
 ## 技术栈
 
@@ -80,6 +81,10 @@ pnpm dev:web      # http://localhost:5173
 | POST | `/api/conversations` | 创建会话 |
 | GET | `/api/conversations/:id/messages` | 消息历史 |
 | POST | `/api/chat/:conversationId` | 发送消息（SSE 流式） |
+| POST | `/api/auth/register` | 注册（自动合并游客会话） |
+| POST | `/api/auth/login` | 登录 |
+| GET | `/api/auth/me` | 当前用户信息 |
+| POST | `/api/auth/logout` | 退出（客户端清除 token） |
 | DELETE | `/api/conversations/:id` | 删除会话 |
 
 ## 后续规划

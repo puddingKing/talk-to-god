@@ -21,6 +21,9 @@ export const philosophers = sqliteTable("philosophers", {
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   guestId: text("guest_id"),
+  phone: text("phone"),
+  passwordHash: text("password_hash"),
+  nickname: text("nickname"),
   createdAt: text("created_at").notNull(),
 });
 

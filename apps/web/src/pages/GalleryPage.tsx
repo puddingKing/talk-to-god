@@ -3,6 +3,9 @@ import type { Philosopher } from "@talk-to-god/shared";
 import { fetchPhilosophers } from "../lib/api";
 import PhilosopherCard from "../components/PhilosopherCard";
 
+const LOGO_URL =
+  "https://lhcos-bc64d-1325353783.cos.ap-beijing.myqcloud.com/talk-to-god/logo_min.png";
+
 const ERAS = ["全部", "古希腊", "春秋", "战国", "近代", "现代"];
 const REGIONS = ["全部", "西方", "东方"];
 
@@ -28,7 +31,14 @@ export default function GalleryPage() {
   return (
     <div className="px-4 pt-6 pb-4">
       <header className="mb-6">
-        <h1 className="font-serif text-2xl font-bold text-primary">与哲对话</h1>
+        <div className="flex items-center gap-2.5">
+          <img
+            src={LOGO_URL}
+            alt="与哲对话"
+            className="w-9 h-9 rounded-lg object-cover shrink-0"
+          />
+          <h1 className="font-serif text-2xl font-bold text-accent">与哲对话</h1>
+        </div>
         <p className="text-sm text-text-muted mt-1">选择一位哲学家，开启思辨之旅</p>
       </header>
 

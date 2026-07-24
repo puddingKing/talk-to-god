@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { getConfig } from "../config.js";
 import { db } from "../db/index.js";
-import { philosophers, conversations, messages, users } from "../db/schema.js";
+import { philosophers, conversations, messages } from "../db/schema.js";
 import { eq, and } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -10,26 +10,25 @@ import {
   trimContextMessages,
   type ChatMessage,
 } from "../services/llm.js";
-
-function getOrCreateGuestUser(guestId: string) {
-  let user = db.select().from(users).where(eq(users.guestId, guestId)).get();
-  if (!user) {
-    const id = uuidv4();
-    const now = new Date().toISOString();
-    db.insert(users).values({ id, guestId, createdAt: now }).run();
-    user = { id, guestId, createdAt: now };
-  }
-  return user;
-}
+import { resolveCurrentUser } from "../services/user.js";
+import { checkGuestCanSend } from "../services/guest-limit.js";
 
 export async function chatRoutes(app: FastifyInstance) {
   app.post("/api/chat/:conversationId", async (request, reply) => {
     const { conversationId } = request.params as { conversationId: string };
     const { content } = request.body as { content: string };
-    const guestId = (request.headers["x-guest-id"] as string) || "anonymous";
 
     if (!content?.trim()) {
       return reply.status(400).send({ error: "消息内容不能为空" });
+    }
+
+    const user = resolveCurrentUser(request);
+    const guestCheck = checkGuestCanSend(user);
+    if (!guestCheck.allowed) {
+      return reply.status(403).send({
+        error: guestCheck.message,
+        code: "GUEST_LIMIT_EXCEEDED",
+      });
     }
 
     const { apiKey, baseUrl, model } = getConfig().llm;
@@ -37,7 +36,6 @@ export async function chatRoutes(app: FastifyInstance) {
       return reply.status(503).send({ error: "LLM API 未配置，请在 .env 中设置 LLM_API_KEY" });
     }
 
-    const user = getOrCreateGuestUser(guestId);
     const conv = db
       .select()
       .from(conversations)

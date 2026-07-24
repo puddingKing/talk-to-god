@@ -1,24 +1,36 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import type { Message } from "@talk-to-god/shared";
-import { fetchMessages, sendMessageStream, fetchConversations } from "../lib/api";
+import type { GuestQuota, Message } from "@talk-to-god/shared";
+import { useAuth } from "../context/AuthContext";
+import { fetchGuestQuota, fetchMessages, sendMessageStream, fetchConversations } from "../lib/api";
 
 export default function ChatPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [streamContent, setStreamContent] = useState("");
   const [philosopherName, setPhilosopherName] = useState("");
   const [philosopherId, setPhilosopherId] = useState("");
+  const [quota, setQuota] = useState<GuestQuota | null>(null);
+  const [limitHint, setLimitHint] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const isGuest = quota?.isGuest ?? !user;
+  const limitReached = isGuest && quota !== null && quota.remaining <= 0;
+
+  const loadQuota = () => {
+    fetchGuestQuota().then(setQuota).catch(console.error);
+  };
 
   useEffect(() => {
     if (!id) return;
 
     fetchMessages(id).then(setMessages).catch(console.error);
+    loadQuota();
 
     const storedName = sessionStorage.getItem(`conv-${id}-name`);
     const storedPhilId = sessionStorage.getItem(`conv-${id}-philosopher`);
@@ -39,15 +51,20 @@ export default function ChatPage() {
   }, [id]);
 
   useEffect(() => {
+    if (user) loadQuota();
+  }, [user]);
+
+  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamContent]);
+  }, [messages, streamContent, limitHint]);
 
   const handleSend = async () => {
-    if (!id || !input.trim() || streaming) return;
+    if (!id || !input.trim() || streaming || limitReached) return;
     const content = input.trim();
     setInput("");
     setStreaming(true);
     setStreamContent("");
+    setLimitHint("");
 
     const tempUserMsg: Message = {
       id: `temp-${Date.now()}`,
@@ -79,11 +96,15 @@ export default function ChatPage() {
         ]);
         setStreamContent("");
         setStreaming(false);
+        loadQuota();
       },
       (error) => {
-        alert(error);
+        setMessages((prev) => prev.filter((m) => m.id !== tempUserMsg.id));
+        setInput(content);
         setStreamContent("");
         setStreaming(false);
+        setLimitHint(error);
+        loadQuota();
       }
     );
   };
@@ -104,6 +125,16 @@ export default function ChatPage() {
           <span className="font-medium text-sm">{philosopherName || "对话中"}</span>
         </button>
       </header>
+
+      {isGuest && quota && !limitReached && (
+        <div className="px-4 py-2 bg-accent/10 text-xs text-accent text-center shrink-0">
+          游客模式：还可发送 {quota.remaining} 条消息，
+          <Link to="/profile" className="underline font-medium">
+            登录
+          </Link>
+          后解锁无限对话
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {messages.map((msg) => (
@@ -154,6 +185,21 @@ export default function ChatPage() {
           </div>
         )}
 
+        {(limitReached || limitHint) && (
+          <div className="mx-2 p-4 rounded-xl bg-primary/5 border border-primary/15 text-center">
+            <p className="text-sm text-primary font-medium">
+              {limitHint || `您处于游客模式，最多只能发送 ${quota?.limit ?? 3} 条消息`}
+            </p>
+            <p className="text-xs text-text-muted mt-1">请登录后继续与哲学家对话</p>
+            <Link
+              to="/profile"
+              className="inline-block mt-3 px-5 py-2 bg-primary text-white rounded-full text-sm"
+            >
+              去登录
+            </Link>
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 
@@ -164,13 +210,13 @@ export default function ChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            placeholder="输入你的问题…"
-            disabled={streaming}
+            placeholder={limitReached ? "请先登录后继续对话" : "输入你的问题…"}
+            disabled={streaming || limitReached}
             className="flex-1 px-4 py-2.5 rounded-full border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
           />
           <button
             onClick={handleSend}
-            disabled={streaming || !input.trim()}
+            disabled={streaming || !input.trim() || limitReached}
             className="px-5 py-2.5 bg-primary text-white rounded-full text-sm font-medium disabled:opacity-50"
           >
             发送

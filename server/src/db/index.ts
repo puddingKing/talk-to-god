@@ -59,4 +59,17 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations(user_id);
     CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id);
   `);
+
+  migrateUsersTable();
+}
+
+function migrateUsersTable() {
+  const cols = sqlite.pragma("table_info(users)") as { name: string }[];
+  const names = new Set(cols.map((c) => c.name));
+  if (!names.has("phone")) sqlite.exec("ALTER TABLE users ADD COLUMN phone TEXT");
+  if (!names.has("password_hash")) sqlite.exec("ALTER TABLE users ADD COLUMN password_hash TEXT");
+  if (!names.has("nickname")) sqlite.exec("ALTER TABLE users ADD COLUMN nickname TEXT");
+  sqlite.exec(
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone ON users(phone) WHERE phone IS NOT NULL"
+  );
 }

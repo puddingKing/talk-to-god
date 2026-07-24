@@ -49,3 +49,22 @@ export interface ChatStreamEvent {
   content?: string;
   messageId?: string;
 }
+
+export interface AuthUser {
+  id: string;
+  phone?: string;
+  nickname?: string;
+  isGuest: boolean;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+export interface GuestQuota {
+  isGuest: boolean;
+  used: number;
+  limit: number;
+  remaining: number;
+}

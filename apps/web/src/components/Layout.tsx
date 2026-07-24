@@ -25,6 +25,14 @@ export default function Layout() {
         >
           会话
         </NavLink>
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `flex-1 py-3 text-center text-sm ${isActive ? "text-primary font-medium" : "text-text-muted"}`
+          }
+        >
+          我的
+        </NavLink>
       </nav>
 
       <p className="fixed bottom-16 left-0 right-0 text-center text-[10px] text-text-muted/60 pointer-events-none">
