@@ -1,6 +1,6 @@
 import type { Philosopher, PhilosopherDetail } from "@talk-to-god/shared";
 
-interface DbPhilosopher {
+export interface DbPhilosopher {
   id: string;
   name: string;
   nameEn: string | null;

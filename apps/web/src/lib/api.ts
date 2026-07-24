@@ -1,6 +1,7 @@
 import type { Philosopher, Conversation, Message, AuthUser, AuthResponse, GuestQuota } from "@talk-to-god/shared";
 import { getGuestId } from "./guest";
 import { getToken } from "./auth";
+import { apiUrl } from "./paths";
 
 function apiHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
@@ -27,19 +28,19 @@ export async function fetchPhilosophers(params?: {
   if (params?.region) search.set("region", params.region);
   if (params?.q) search.set("q", params.q);
   const qs = search.toString();
-  const res = await fetch(`/api/philosophers${qs ? `?${qs}` : ""}`);
+  const res = await fetch(apiUrl(`/api/philosophers${qs ? `?${qs}` : ""}`));
   if (!res.ok) throw new Error("获取哲学家列表失败");
   return res.json();
 }
 
 export async function fetchPhilosopher(id: string): Promise<Philosopher> {
-  const res = await fetch(`/api/philosophers/${id}`);
+  const res = await fetch(apiUrl(`/api/philosophers/${id}`));
   if (!res.ok) throw new Error("获取哲学家详情失败");
   return res.json();
 }
 
 export async function fetchConversations(): Promise<Conversation[]> {
-  const res = await fetch("/api/conversations", { headers: apiHeaders() });
+  const res = await fetch(apiUrl("/api/conversations"), { headers: apiHeaders() });
   if (!res.ok) throw new Error("获取会话列表失败");
   return res.json();
 }
@@ -49,7 +50,7 @@ export async function createConversation(philosopherId: string): Promise<{
   philosopherId: string;
   openingLine?: string;
 }> {
-  const res = await fetch("/api/conversations", {
+  const res = await fetch(apiUrl("/api/conversations"), {
     method: "POST",
     headers: apiHeaders(),
     body: JSON.stringify({ philosopherId }),
@@ -59,7 +60,7 @@ export async function createConversation(philosopherId: string): Promise<{
 }
 
 export async function fetchMessages(conversationId: string): Promise<Message[]> {
-  const res = await fetch(`/api/conversations/${conversationId}/messages`, {
+  const res = await fetch(apiUrl(`/api/conversations/${conversationId}/messages`), {
     headers: apiHeaders(),
   });
   if (!res.ok) throw new Error("获取消息失败");
@@ -67,7 +68,7 @@ export async function fetchMessages(conversationId: string): Promise<Message[]> 
 }
 
 export async function deleteConversation(id: string): Promise<void> {
-  const res = await fetch(`/api/conversations/${id}`, {
+  const res = await fetch(apiUrl(`/api/conversations/${id}`), {
     method: "DELETE",
     headers: apiHeaders(),
   });
@@ -75,7 +76,7 @@ export async function deleteConversation(id: string): Promise<void> {
 }
 
 export async function login(phone: string, password: string): Promise<AuthResponse> {
-  const res = await fetch("/api/auth/login", {
+  const res = await fetch(apiUrl("/api/auth/login"), {
     method: "POST",
     headers: apiHeaders(),
     body: JSON.stringify({ phone, password }),
@@ -89,7 +90,7 @@ export async function register(
   password: string,
   nickname?: string
 ): Promise<AuthResponse> {
-  const res = await fetch("/api/auth/register", {
+  const res = await fetch(apiUrl("/api/auth/register"), {
     method: "POST",
     headers: apiHeaders(),
     body: JSON.stringify({ phone, password, nickname }),
@@ -99,13 +100,13 @@ export async function register(
 }
 
 export async function fetchMe(): Promise<AuthUser> {
-  const res = await fetch("/api/auth/me", { headers: apiHeaders() });
+  const res = await fetch(apiUrl("/api/auth/me"), { headers: apiHeaders() });
   if (!res.ok) await parseError(res, "未登录");
   return res.json();
 }
 
 export async function fetchGuestQuota(): Promise<GuestQuota> {
-  const res = await fetch("/api/auth/guest-quota", { headers: apiHeaders() });
+  const res = await fetch(apiUrl("/api/auth/guest-quota"), { headers: apiHeaders() });
   if (!res.ok) throw new Error("获取游客额度失败");
   return res.json();
 }
@@ -117,7 +118,7 @@ export async function sendMessageStream(
   onDone: (messageId: string) => void,
   onError: (error: string) => void
 ): Promise<void> {
-  const res = await fetch(`/api/chat/${conversationId}`, {
+  const res = await fetch(apiUrl(`/api/chat/${conversationId}`), {
     method: "POST",
     headers: apiHeaders(),
     body: JSON.stringify({ content }),

@@ -95,7 +95,7 @@ export default function PhilosopherDetailPage() {
             <h2 className="text-sm font-medium mb-2">核心概念</h2>
             <div className="flex flex-wrap gap-2">
               {philosopher.keyConcepts.map((c) => (
-                <span key={c} className="text-xs px-2.5 py-1 bg-accent/10 text-accent rounded-full">
+                <span key={c} className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full">
                   {c}
                 </span>
               ))}

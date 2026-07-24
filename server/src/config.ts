@@ -22,5 +22,6 @@ export function getConfig() {
     },
     jwtSecret: process.env.JWT_SECRET || "dev-secret-change-in-production",
     guestMessageLimit: Number(process.env.GUEST_MESSAGE_LIMIT) || 3,
+    adminSecret: process.env.ADMIN_SECRET || "",
   };
 }

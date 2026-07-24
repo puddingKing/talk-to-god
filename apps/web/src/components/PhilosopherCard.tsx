@@ -84,13 +84,13 @@ export default function PhilosopherCard({ philosopher }: Props) {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-serif text-lg font-medium truncate">{philosopher.name}</h3>
+            <h3 className="text-lg font-medium truncate text-accent">{philosopher.name}</h3>
             {philosopher.nameEn && (
               <p className="text-xs text-text-muted truncate">{philosopher.nameEn}</p>
             )}
             <div className="flex flex-wrap gap-1 mt-1.5">
               {philosopher.school.slice(0, 2).map((s) => (
-                <span key={s} className="text-[10px] px-1.5 py-0.5 bg-accent/15 text-accent rounded">
+                <span key={s} className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">
                   {s}
                 </span>
               ))}

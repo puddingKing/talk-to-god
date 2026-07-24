@@ -25,6 +25,26 @@ export interface PhilosopherDetail extends Philosopher {
   personaPrompt?: string;
 }
 
+export interface PhilosopherInput {
+  id: string;
+  name: string;
+  nameEn?: string;
+  avatarUrl?: string;
+  birthYear?: number;
+  deathYear?: number;
+  school: string[];
+  era?: string;
+  region?: string;
+  tagline?: string;
+  bio?: string;
+  keyConcepts: string[];
+  representativeWorks: RepresentativeWork[];
+  personaPrompt: string;
+  openingLine?: string;
+}
+
+export type PhilosopherAdmin = PhilosopherInput;
+
 export interface Conversation {
   id: string;
   philosopherId: string;

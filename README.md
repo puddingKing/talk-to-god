@@ -54,6 +54,15 @@ pnpm dev:web      # http://localhost:5180
 - [x] 游客模式（localStorage 标识）
 - [x] 8 位种子哲学家（尼采、苏格拉底、孔子、老子、柏拉图、康德、庄子、萨特）
 - [x] 登录/注册（手机号 + 密码，JWT，游客会话合并）
+- [x] 后台哲学家配置（Admin CMS）
+
+## 后台管理
+
+1. 在 `.env` 中设置 `ADMIN_SECRET=你的密钥`
+2. 访问 http://localhost:5180/admin
+3. 输入密钥后即可增删改哲学家信息
+
+可配置字段：姓名、简介、流派、核心概念、代表著作、开场白、**系统提示词（人设 Prompt）**、头像 URL 等。前台图鉴与对话会实时读取数据库最新配置。
 
 ## 技术栈
 
@@ -63,6 +72,66 @@ pnpm dev:web      # http://localhost:5180
 | 后端 | Fastify + TypeScript |
 | 数据库 | SQLite（开发）/ 可迁移 PostgreSQL |
 | AI | OpenAI 兼容 API（SSE 流式） |
+
+## 部署到腾讯云
+
+目标服务器：**81.70.46.23**（第一台轻量服务器）
+
+### 1. 配置 SSH 登录
+
+在腾讯云控制台 → 轻量服务器 → 密钥/密码，绑定你的 SSH 公钥：
+
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+
+将输出内容添加到服务器。本地测试：
+
+```bash
+ssh root@81.70.46.23
+```
+
+### 2. 首次初始化服务器（只需一次）
+
+```bash
+scp deploy/server-bootstrap.sh root@81.70.46.23:/tmp/
+ssh root@81.70.46.23 'bash /tmp/server-bootstrap.sh'
+```
+
+### 3. 配置生产环境变量
+
+确保本地 `.env` 已填写 `LLM_API_KEY` 等，或参考 `deploy/env.production.example`。
+
+**重要**：部署后 `.env` 中 `CORS_ORIGIN` 会自动改为 `http://81.70.46.23`。
+
+### 4. 一键部署
+
+```bash
+chmod +x deploy/deploy.sh
+./deploy/deploy.sh
+```
+
+自定义服务器：
+
+```bash
+DEPLOY_HOST=81.70.46.23 DEPLOY_USER=root ./deploy/deploy.sh
+```
+
+### 5. 安全组
+
+在腾讯云防火墙中放行 **80**（HTTP）端口。
+
+### 部署架构
+
+```
+Nginx :80  →  静态前端 (apps/web/dist)
+          →  /api/* 反代到 Node :3002 (PM2)
+SQLite 数据  →  server/data/talk-to-god.db
+```
+
+访问地址：
+- 前台：http://81.70.46.23
+- 后台：http://81.70.46.23/admin
 
 ## 部署参考（腾讯云）
 
@@ -86,11 +155,18 @@ pnpm dev:web      # http://localhost:5180
 | GET | `/api/auth/me` | 当前用户信息 |
 | POST | `/api/auth/logout` | 退出（客户端清除 token） |
 | DELETE | `/api/conversations/:id` | 删除会话 |
+| GET | `/api/admin/philosophers` | 后台：哲学家列表（含 Prompt） |
+| GET | `/api/admin/philosophers/:id` | 后台：哲学家详情 |
+| POST | `/api/admin/philosophers` | 后台：新增哲学家 |
+| PUT | `/api/admin/philosophers/:id` | 后台：更新哲学家 |
+| DELETE | `/api/admin/philosophers/:id` | 后台：删除哲学家 |
+
+> 后台接口需在请求头携带 `X-Admin-Key: <ADMIN_SECRET>`
 
 ## 后续规划
 
 - v1.1：登录体系、分享卡片
 - v1.2：会话管理增强、摘要记忆
 - 小程序端（Taro）
-- 哲学家 CMS 后台
+- ~~哲学家 CMS 后台~~（已完成）
 - 腾讯云 COS 头像上传
